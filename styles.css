@@ -1,0 +1,329 @@
+/* =========================================================
+   Grace — Bio Aesthetic UI
+   Clean typography (Arial), luminous gradients, glass cards,
+   curved purple side stripes, and accessible focus styles.
+   ========================================================= */
+
+/* 1) Root and design tokens */
+:root {
+    /* Palette inspired by electron microscopy & lab environments */
+    --bg-dark: #0A0E1A;
+    --bg-dark-2: #101828;
+  
+    --virus-blue: #2563EB;
+    --virus-purple: #7C3AED;
+    --virus-green: #10B981;
+    --highlight: #F59E0B;
+  
+    --neutral: #ffffff;
+  
+    /* Typography */
+    --font-base: Arial, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-heading: Arial, sans-serif;
+  
+    /* Radii & shadows */
+    --r-lg: 16px;
+    --r-md: 14px;
+    --r-full: 999px;
+  
+    --shadow-sm: 0 6px 18px rgba(0,0,0,0.3);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.35);
+  
+    /* Borders and glass */
+    --border-soft: rgba(203, 213, 225, 0.2);
+    --glass-fill: rgba(17, 24, 39, 0.45);
+    --glass-stroke: rgba(255,255,255,0.06);
+  
+    /* Accent glows */
+    --glow-purple: rgba(124, 58, 237, 0.6);
+    --glow-blue: rgba(37, 99, 235, 0.5);
+  }
+  
+  /* 2) Base reset and accessibility */
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+  
+  html, body { height: 100%; }
+  
+  html { scroll-behavior: smooth; }
+  
+  body {
+    margin: 0;
+    color: var(--neutral);
+    font-family: var(--font-base);
+    font-size: clamp(16px, 1.05vw + 14px, 18px);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(124, 58, 237, 0.12), transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.12), transparent 46%),
+      radial-gradient(circle at 30% 80%, rgba(16, 185, 129, 0.08), transparent 40%),
+      linear-gradient(180deg, var(--bg-dark), var(--bg-dark-2));
+    overflow-x: hidden; /* prevent side artifacts on stripes */
+  }
+  
+  /* 3) Curved purple side stripes (with soft glow) */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    height: 100dvh;
+    width: 64px;                 /* thickness of stripe */
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(124,58,237,0.6), transparent 60%),
+      radial-gradient(circle at 70% 80%, rgba(37,99,235,0.5), transparent 60%),
+      linear-gradient(180deg, rgba(124,58,237,0.9), rgba(37,99,235,0.9));
+    filter: drop-shadow(0 0 24px rgba(124,58,237,0.35));
+    /* Create repeating curved cutouts */
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="160" viewBox="0 0 60 160"><path d="M0,0 C36,30 36,70 0,100 L0,160 L60,160 L60,0 Z" fill="black"/><path d="M0,0 C22,30 22,70 0,100 L0,0 Z" fill="white"/></svg>') repeat-y left top / 64px 160px;
+            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="160" viewBox="0 0 60 160"><path d="M0,0 C36,30 36,70 0,100 L0,160 L60,160 L60,0 Z" fill="black"/><path d="M0,0 C22,30 22,70 0,100 L0,0 Z" fill="white"/></svg>') repeat-y left top / 64px 160px;
+    animation: stripeFlow 18s ease-in-out infinite alternate;
+  }
+  
+  body::before { left: 0; }
+  body::after  {
+    right: 0;
+    transform: scaleX(-1); /* mirror curve */
+  }
+  
+  /* Fallback if mask is unsupported: show a simple soft bar */
+  @supports not (mask: url("")) {
+    body::before,
+    body::after {
+      -webkit-mask: none; mask: none;
+      background: linear-gradient(180deg, rgba(124,58,237,0.9), rgba(37,99,235,0.9));
+      border-left: 1px solid rgba(124,58,237,0.4);
+      border-right: 1px solid rgba(37,99,235,0.4);
+    }
+  }
+  
+  @keyframes stripeFlow {
+    0%   { background-position: center 0, center 0, center 0; }
+    100% { background-position: center 120px, center -120px, center 80px; }
+  }
+  
+  /* 4) Containers and layout */
+  .container {
+    width: min(1100px, 100% - 2rem);
+    margin-inline: auto;
+  }
+  
+  .grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 1.25rem;
+  }
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  
+  /* 5) Header, hero, and footer */
+  .site-header {
+    position: relative;
+    padding: 1.25rem 0 2rem;
+  }
+  
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .brand {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--neutral);
+    background: linear-gradient(90deg, var(--virus-purple), var(--virus-blue));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+  
+  .nav-actions { display: flex; align-items: center; gap: 1rem; }
+  
+  .hero {
+    padding: 3rem 0 2.25rem;
+    position: relative;
+  }
+  
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -10% -20% -10%;
+    height: 40%;
+    background: radial-gradient(60% 80% at 50% 0%, rgba(124,58,237,0.25), transparent 70%);
+    filter: blur(32px);
+    z-index: -1;
+  }
+  
+  .site-footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 3rem;
+  }
+  .footer-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 0 2rem;
+  }
+  
+  /* 6) Typography */
+  h1, h2, h3 {
+    font-family: var(--font-heading);
+    line-height: 1.15;
+    margin: 0 0 0.5rem 0;
+    color: var(--neutral);
+    text-shadow: 1px 1px 3px rgba(37,99,235,0.25);
+  }
+  
+  h1 { font-size: clamp(2rem, 4vw, 3rem); }
+  h2 { font-size: clamp(1.4rem, 2.6vw, 2rem); color: var(--virus-blue); }
+  h3 { font-size: clamp(1.15rem, 1.8vw, 1.35rem); color: var(--neutral); }
+  
+  .lede {
+    max-width: 60ch;
+    color: #E6EAF5;
+    opacity: 0.9;
+  }
+  
+  /* 7) Links and buttons */
+  .link {
+    color: #DADCF3;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(218,220,243,0.35);
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .link:hover { color: #FFFFFF; border-color: rgba(255,255,255,0.6); }
+  
+  .btn {
+    appearance: none;
+    border: 0;
+    padding: 0.7rem 1.1rem;
+    border-radius: var(--r-full);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    position: relative;
+    isolation: isolate;
+  }
+  
+  .btn-primary {
+    color: white;
+    background:
+      linear-gradient(180deg, rgba(124,58,237,0.15), rgba(37,99,235,0.15)) padding-box,
+      linear-gradient(90deg, var(--virus-purple), var(--virus-blue)) border-box;
+    border: 2px solid transparent;
+    box-shadow: 0 6px 18px rgba(124,58,237,0.25);
+    transition: transform .15s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(124,58,237,0.35); }
+  
+  .btn-ghost {
+    color: #E8EAF7;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: saturate(140%) blur(6px);
+    transition: border-color .2s ease, background .2s ease, transform .15s ease;
+  }
+  .btn-ghost:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+  
+  /* Keyboard focus */
+  :focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.6), 0 0 0 6px rgba(124,58,237,0.2);
+    border-radius: 10px;
+  }
+  
+  /* 8) Sections and cards (glassy, luminous) */
+  .section {
+    position: relative;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.07), rgba(124, 58, 237, 0.07));
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-lg);
+    padding: clamp(1rem, 3vw, 2rem);
+    margin: 2rem auto;
+    max-width: 960px;
+    box-shadow: var(--shadow-lg);
+    overflow: clip;
+  }
+  
+  /* Gradient border sheen */
+  .section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(124,58,237,0.35), rgba(37,99,235,0.35));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+  
+  /* Cards */
+  .card {
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-stroke);
+    padding: 1.25rem;
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: saturate(135%) blur(10px);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: var(--virus-green);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.45), 0 0 24px rgba(16,185,129,0.18);
+  }
+  
+  /* 9) Chips and decorative strand */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0 1rem; }
+  
+  .chip {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: var(--r-full);
+    font-size: 0.875rem;
+    font-weight: 700;
+    border: 1px solid var(--virus-purple);
+    color: var(--virus-purple);
+    background-color: rgba(124, 58, 237, 0.1);
+    transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+    will-change: transform;
+  }
+  .chip:hover { background-color: var(--virus-purple); color: #fff; transform: translateY(-2px); }
+  
+  .strand {
+    height: 2px;
+    width: 100%;
+    margin: 20px 0;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--virus-purple),
+      var(--virus-purple) 10px,
+      var(--virus-blue) 10px,
+      var(--virus-blue) 20px
+    );
+    border-radius: 3px;
+    opacity: 0.9;
+  }
+  
+  /* 10) Utilities */
+  .mt-1 { margin-top: 0.5rem; }
+  .mt-2 { margin-top: 1rem; }
+  .mt-3 { margin-top: 1.5rem; }
+  
+  /* Ensure main content sits above stripes */
+  header, main, footer, .container, .section, .card { position: relative; z-index: 1; }
+  
